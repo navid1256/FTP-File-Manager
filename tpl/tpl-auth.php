@@ -5,7 +5,6 @@
 /** @var string|null $authSuccess */
 /** @var array $oldInput */
 /** @var string $csrfToken */
-/** @var string $baseUrl */
 
 $activeAuthForm = ($activeAuthForm ?? 'login') === 'register' ? 'register' : 'login';
 $authErrors = isset($authErrors) && is_array($authErrors) ? $authErrors : [];
@@ -14,7 +13,6 @@ $oldInput = array_merge(
     ['email' => '', 'username' => ''],
     isset($oldInput) && is_array($oldInput) ? $oldInput : []
 );
-$baseUrl = isset($baseUrl) ? $baseUrl : '/';
 $isRegister = $activeAuthForm === 'register';
 $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
 ?>
@@ -23,8 +21,10 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
 
 <head>
     <meta charset="UTF-8">
-    <title>MyTodo Authentication</title>
-    <link rel="stylesheet" href="<?= htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8') ?>assets/css/pages/auth.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= esc(SITE_TITLE) ?> Authentication</title>
+    <link rel="icon" href="<?= esc(site_url('assets/img/logo%201024.png')) ?>" type="image/png">
+    <link rel="stylesheet" href="<?= esc(site_url('assets/css/pages/auth.css')) ?>">
 </head>
 
 <body>
@@ -47,9 +47,9 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
         <?php endif; ?>
         <div id="panel-box">
             <div class="panel">
-                <div class="auth-form <?= !$isRegister ? 'on' : '' ?>" id="login">
+                <div class="auth-form <?= !$isRegister ? 'on' : '' ?>" id="login" <?= $isRegister ? 'inert' : '' ?>>
                     <div class="form-title">Log In</div>
-                    <form action="<?= htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8') ?>login" method="POST">
+                    <form action="<?= esc(site_url('auth.php?action=login')) ?>" method="POST">
                         <input
                             name="csrf_token"
                             type="hidden"
@@ -68,12 +68,15 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
                             type="text"
                             required
                             autocomplete="username"
+                            autocapitalize="none"
+                            autocorrect="off"
+                            spellcheck="false"
                             placeholder="Username"
                             value="<?= htmlspecialchars((string) $oldInput['username'], ENT_QUOTES, 'UTF-8') ?>" />
                         <div class="password-field">
-                            <label class="srOnly" for="login-password">Password</label>
+                            <label class="srOnly" for="current-password">Password</label>
                             <input
-                                id="login-password"
+                                id="current-password"
                                 name="password"
                                 type="password"
                                 required
@@ -82,7 +85,7 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
                             <button
                                 class="password-toggle"
                                 type="button"
-                                data-password-target="login-password"
+                                data-password-target="current-password"
                                 aria-label="Show password"
                                 aria-pressed="false">
                                 <svg class="password-icon password-icon-closed" aria-hidden="true">
@@ -96,9 +99,9 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
                         <button type="submit">Log In</button>
                     </form>
                 </div>
-                <div class="auth-form <?= $isRegister ? 'on' : '' ?>" id="signup">
+                <div class="auth-form <?= $isRegister ? 'on' : '' ?>" id="signup" <?= !$isRegister ? 'inert' : '' ?>>
                     <div class="form-title">Register</div>
-                    <form action="<?= htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8') ?>register" method="POST">
+                    <form action="<?= esc(site_url('auth.php?action=register')) ?>" method="POST">
                         <input
                             name="csrf_token"
                             type="hidden"
@@ -110,15 +113,6 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-                        <label class="srOnly" for="register-email">Email</label>
-                        <input
-                            id="register-email"
-                            name="email"
-                            type="email"
-                            required
-                            autocomplete="email"
-                            placeholder="Email"
-                            value="<?= htmlspecialchars((string) $oldInput['email'], ENT_QUOTES, 'UTF-8') ?>" />
                         <label class="srOnly" for="register-username">Username</label>
                         <input
                             id="register-username"
@@ -131,6 +125,15 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
                             autocomplete="username"
                             placeholder="Username"
                             value="<?= htmlspecialchars((string) $oldInput['username'], ENT_QUOTES, 'UTF-8') ?>" />
+                        <label class="srOnly" for="register-email">Email</label>
+                        <input
+                            id="register-email"
+                            name="email"
+                            type="email"
+                            required
+                            autocomplete="email"
+                            placeholder="Email"
+                            value="<?= htmlspecialchars((string) $oldInput['email'], ENT_QUOTES, 'UTF-8') ?>" />
                         <div class="password-field">
                             <label class="srOnly" for="register-password">Password</label>
                             <input
@@ -184,7 +187,7 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
                 </div>
             </div>
             <div class="panel">
-                <div id="switch" class="<?= $isRegister ? 'two' : '' ?>"><?= $isRegister ? 'Log In' : 'Sign Up' ?></div>
+                <button type="button" id="switch" class="<?= $isRegister ? 'two' : '' ?>"><?= $isRegister ? 'Log In' : 'Sign Up' ?></button>
                 <div id="image-overlay" class="<?= $isRegister ? 'two' : '' ?>"></div>
                 <div id="image-side"></div>
             </div>
@@ -202,6 +205,8 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
         switchButton.addEventListener('click', function() {
             loginForm.classList.toggle('on');
             signupForm.classList.toggle('on');
+            loginForm.inert = !loginForm.classList.contains('on');
+            signupForm.inert = !signupForm.classList.contains('on');
             switchButton.textContent = signupForm.classList.contains('on') ? 'Log In' : 'Sign Up';
             switchButton.classList.toggle('two');
             background.classList.toggle('two');

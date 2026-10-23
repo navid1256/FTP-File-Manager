@@ -15,7 +15,8 @@
       <div class="auth-message error"><?= esc($authError) ?></div>
     <?php endif; ?>
 
-    <form method="post" id="loginForm" action="<?= site_url('auth.php?action=login') ?>">
+    <form method="post" id="loginForm" action="<?= esc(site_url('auth.php?mode=otp&action=otp-login')) ?>">
+      <input type="hidden" name="csrf_token" value="<?= esc($csrfToken) ?>">
       <div class="input-box">
         <input
           type="tel"
@@ -45,6 +46,7 @@
 
       <button type="submit" name="verify" class="btn">ورود</button>
     </form>
+    <p style="text-align: center;"><a href="<?= esc(site_url('auth.php')) ?>">ورود با نام کاربری و رمز عبور</a></p>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

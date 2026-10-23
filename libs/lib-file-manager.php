@@ -197,7 +197,7 @@ function fmFetchUsersForHomes()
 {
     global $pdo;
 
-    $stmt = $pdo->query("select * from users order by name");
+    $stmt = $pdo->query("select *, username AS name from users order by username");
     if ($stmt === false) {
         throw new FileManagerException('Could not load users.');
     }

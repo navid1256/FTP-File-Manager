@@ -17,7 +17,7 @@ function getLoggedInUser(){
 
 function getUserByEmail($email){
     global $pdo;
-    $sql = "SELECT * FROM `users` WHERE email = :email";
+    $sql = "SELECT *, username AS name FROM `users` WHERE email = :email";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':email' => $email]);
     $records = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -26,7 +26,7 @@ function getUserByEmail($email){
 
 function getUserByName($name){
     global $pdo;
-    $sql = "SELECT * FROM `users` WHERE name = :name LIMIT 1";
+    $sql = "SELECT *, username AS name FROM `users` WHERE username = :name LIMIT 1";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':name' => $name]);
     $record = $stmt->fetch(PDO::FETCH_OBJ);
@@ -53,6 +53,27 @@ function login($phone, $otp){
     }
 
     if(is_null($user)){
+        return false;
+    }
+
+    session_regenerate_id(true);
+    $user->image = fmGetUserProfileImage($user);
+    $_SESSION['login'] = $user;
+    return true;
+}
+
+function loginWithPassword($username, $password){
+    if(!is_string($username) || !is_string($password)){
+        return false;
+    }
+
+    $username = trim($username);
+    if($username === '' || $password === '' || strlen($username) > 255 || strlen($password) > 4096){
+        return false;
+    }
+
+    $user = getUserByName($username);
+    if(!$user || !is_string($user->password ?? null) || !password_verify($password, $user->password)){
         return false;
     }
 
