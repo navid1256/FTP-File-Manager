@@ -1,0 +1,16 @@
+{
+    "name": "navid/7file-manager",
+    "description": "A simple FTP file manager with per-user FTP accounts",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Navid Ahmadzade",
+            "email": "navid.syndicate01@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "hekmatinasser/verta": "^1.10"
+    }
+}
