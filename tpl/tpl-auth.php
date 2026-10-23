@@ -23,7 +23,7 @@ $csrfToken = isset($csrfToken) && is_string($csrfToken) ? $csrfToken : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= esc(SITE_TITLE) ?> Authentication</title>
-    <link rel="icon" href="<?= esc(site_url('assets/img/logo%201024.png')) ?>" type="image/png">
+    <link rel="icon" href="<?= esc(site_url('assets/img/logo.png')) ?>" type="image/png">
     <link rel="stylesheet" href="<?= esc(site_url('assets/css/pages/auth.css')) ?>">
 </head>
 

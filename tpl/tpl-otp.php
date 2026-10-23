@@ -1,17 +1,19 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= esc(SITE_TITLE) ?> Authentication</title>
   <link rel="stylesheet" href="<?= site_url('assets/css/auth.css?v=auth-3') ?>">
 </head>
+
 <body>
   <div class="wrapper">
-    <img class="logo" src="<?= esc(site_url('assets/img/logo%201024.png')) ?>" alt="7File Manager">
+    <img class="logo" src="<?= esc(site_url('assets/img/logo 1024.png')) ?>" alt="7File Manager">
     <h2>ورود</h2>
 
-    <?php if(!empty($authError)): ?>
+    <?php if (!empty($authError)): ?>
       <div class="auth-message error"><?= esc($authError) ?></div>
     <?php endif; ?>
 
@@ -27,8 +29,7 @@
           autocomplete="tel"
           maxlength="11"
           value="<?= esc($phoneValue ?? '') ?>"
-          required
-        />
+          required />
       </div>
 
       <div class="input-box otp-box">
@@ -39,8 +40,7 @@
           pattern="^[0-9]{6}$"
           placeholder="کد یک‌بار مصرف"
           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6)"
-          required
-        />
+          required />
         <button type="button" class="btn-inside" id="codeBtn">دریافت کد</button>
       </div>
 
@@ -51,7 +51,7 @@
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script>
-    $(function(){
+    $(function() {
       var TEST_PHONE = <?= json_encode(FM_TEST_LOGIN_PHONE) ?>;
       var TEST_OTP = <?= json_encode(FM_TEST_LOGIN_OTP) ?>;
       var $phone = $('#phoneInput');
@@ -61,8 +61,8 @@
 
       $form.prepend($message);
 
-      $('#codeBtn').on('click', function(){
-        if($.trim($phone.val()) !== TEST_PHONE){
+      $('#codeBtn').on('click', function() {
+        if ($.trim($phone.val()) !== TEST_PHONE) {
           $message
             .removeClass('info success')
             .addClass('error')
@@ -81,4 +81,5 @@
     });
   </script>
 </body>
+
 </html>
