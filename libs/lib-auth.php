@@ -39,6 +39,9 @@ function logout(){
 }
 
 function login($phone, $otp){
+    if(function_exists('fmFtpRegistrationEnabled') && fmFtpRegistrationEnabled()){
+        return false; // Fixed development OTP must not authenticate real registered users.
+    }
     $expectedPhone = defined('FM_TEST_LOGIN_PHONE') ? FM_TEST_LOGIN_PHONE : '';
     $expectedOtp = defined('FM_TEST_LOGIN_OTP') ? FM_TEST_LOGIN_OTP : '';
     $testUserName = defined('FM_TEST_LOGIN_USER_NAME') ? FM_TEST_LOGIN_USER_NAME : '';
@@ -56,10 +59,7 @@ function login($phone, $otp){
         return false;
     }
 
-    session_regenerate_id(true);
-    $user->image = fmGetUserProfileImage($user);
-    $_SESSION['login'] = $user;
-    return true;
+    return completeLogin($user);
 }
 
 function loginWithPassword($username, $password){
@@ -77,18 +77,25 @@ function loginWithPassword($username, $password){
         return false;
     }
 
+    return completeLogin($user);
+}
+
+function completeLogin($user){
+    global $pdo;
+    if(function_exists('fmAttachProvisionedStorage') && !fmAttachProvisionedStorage($pdo, $user)){
+        return false;
+    }
     session_regenerate_id(true);
     $user->image = fmGetUserProfileImage($user);
+    unset($user->password, $user->ftp_pass);
     $_SESSION['login'] = $user;
     return true;
 }
 
 function register($userData){
     global $pdo;
-    # validation of $userData here (isValidEmail,isValidUserName,isValidPassowrd)
-    $passHash = password_hash($userData['password'],PASSWORD_BCRYPT);
-    $sql = "INSERT INTO `users` (name,email,password) VALUES (:name,:email,:pass);";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':name'=>$userData['name'],':email'=>$userData['email'],':pass'=>$passHash]);
-    return $stmt->rowCount() ? true : false;
+    if(!fmFtpRegistrationEnabled()){
+        throw new RegistrationException('ثبت‌نام موقتاً فعال نیست.');
+    }
+    return fmRegisterWithFtp($pdo, new FtpHomeClient(fmFtpConfig()), $userData);
 }

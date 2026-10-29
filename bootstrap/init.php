@@ -8,6 +8,7 @@ include "constants.php";
 include BASE_PATH . "bootstrap/config.php";
 include BASE_PATH . "vendor/autoload.php";
 include BASE_PATH . "libs/helpers.php";
+include BASE_PATH . "bootstrap/ftp.php";
 
 try {
     $pdo = new PDO("mysql:dbname=$database_config->db;host={$database_config->host}", $database_config->user, $database_config->pass);
@@ -19,5 +20,7 @@ try {
 
 include BASE_PATH . "libs/lib-auth.php";
 include BASE_PATH . "libs/lib-file-manager.php";
+include BASE_PATH . "libs/lib-ftp.php";
+include BASE_PATH . "libs/lib-registration.php";
 
 // echo "Connection to Database is OK!";

@@ -23,6 +23,10 @@ function fmGetLocalRoot()
 function fmGetCurrentUserFolderName()
 {
     $user = getLoggedInUser();
+    if (($user->storage_driver ?? '') === 'ftp') {
+        // This slice provisions FTP homes; do not silently create a second local home.
+        throw new FileManagerException('فضای FTP این حساب ساخته شده است؛ مدیریت فایل‌های راه دور هنوز در این نسخه فعال نیست.');
+    }
     $name = $user->name ?? '';
 
     if (trim((string)$name) === '') {

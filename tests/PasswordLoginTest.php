@@ -10,6 +10,7 @@ session_start();
 require BASE_PATH . 'libs/helpers.php';
 require BASE_PATH . 'libs/lib-auth.php';
 require BASE_PATH . 'libs/lib-file-manager.php';
+require BASE_PATH . 'libs/lib-registration.php';
 
 function check($condition, $message)
 {

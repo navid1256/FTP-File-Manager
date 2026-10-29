@@ -8,10 +8,16 @@ if(isLoggedIn()){
 $authError = '';
 $phoneValue = '';
 $authErrors = [];
+$authSuccess = is_string($_SESSION['auth_success'] ?? null) ? $_SESSION['auth_success'] : null;
+unset($_SESSION['auth_success']);
 $activeAuthForm = ($_GET['action'] ?? '') === 'register' ? 'register' : 'login';
 $oldInput = ['username' => '', 'email' => ''];
 $csrfToken = getCsrfToken();
 $isOtpLogin = ($_GET['mode'] ?? '') === 'otp';
+if($isOtpLogin && fmFtpRegistrationEnabled()){
+    $isOtpLogin = false;
+    $authErrors[] = 'ورود پیامکی در این مرحله فعال نیست.';
+}
 
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
     $action = $_GET['action'] ?? 'login';
@@ -40,7 +46,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
         $authErrors[] = 'شماره موبایل یا کد یک‌بار مصرف اشتباه است.';
     } elseif($action === 'register'){
-        $authErrors[] = 'ثبت‌نام هنوز فعال نشده است.';
+        try {
+            register($_POST);
+            $_SESSION['auth_success'] = 'حساب و پوشهٔ اختصاصی شما ساخته شد؛ با یوزرنیم و رمز عبور وارد شوید.';
+            redirect(site_url('auth.php'));
+        } catch(RegistrationException | FtpProvisionException $e) {
+            $authErrors[] = $e->getMessage();
+        } catch(Throwable $e) {
+            error_log('registration_failed code=' . $e->getCode());
+            $authErrors[] = 'ثبت‌نام انجام نشد؛ تنظیمات سامانه نیاز به بررسی دارد.';
+        }
     } else {
         $authErrors[] = 'درخواست ورود نامعتبر است.';
     }

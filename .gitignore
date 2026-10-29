@@ -1,3 +1,4 @@
 /vendor/
 /docs/
 /storage/logs/
+/bootstrap/ftp.local.php
